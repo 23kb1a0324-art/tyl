@@ -12,10 +12,14 @@ const STEPS = [
 
 export function AIThinkingProcess() {
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
+      <div className="absolute -right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-10">
+        <Brain className="w-32 h-32 text-primary" />
+      </div>
+
       <div className="flex justify-between items-start mb-4">
         <div className="text-[10px] font-mono text-primary/70 tracking-widest">AI THINKING PROCESS</div>
-        <Brain className="w-4 h-4 text-primary" />
+        <Brain className="w-4 h-4 text-primary relative z-10" />
       </div>
 
       <div className="flex-1 relative">

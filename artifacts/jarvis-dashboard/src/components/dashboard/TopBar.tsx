@@ -78,15 +78,24 @@ export function TopBar() {
 }
 
 function StatTile({ icon: Icon, label, value }: { icon: any, label: string, value: string }) {
+  const isNet = label === 'NET';
   return (
     <div className="flex items-center gap-2 bg-primary/5 border border-primary/20 px-3 py-1.5 rounded-sm">
       <Icon className="w-3.5 h-3.5 text-primary/70" />
       <span className="text-[10px] font-mono text-primary/70">{label}</span>
       <span className="text-xs font-mono text-primary">{value}</span>
-      <div className="w-8 h-2 flex items-end gap-0.5 ml-1">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div key={i} className="w-1 bg-primary/50 rounded-t-sm" style={{ height: `${Math.random() * 100}%` }} />
-        ))}
+      <div className="w-10 h-4 ml-1 flex items-end justify-center gap-[2px]">
+        {isNet ? (
+          <svg viewBox="0 0 40 16" className="w-full h-full text-primary fill-none stroke-current" strokeWidth="1.5">
+            <path d="M0,8 Q5,2 10,8 T20,8 T30,8 T40,8" strokeDasharray="40" strokeDashoffset="0">
+              <animate attributeName="d" values="M0,8 Q5,2 10,8 T20,8 T30,8 T40,8; M0,8 Q5,14 10,8 T20,8 T30,8 T40,8; M0,8 Q5,2 10,8 T20,8 T30,8 T40,8" dur="2s" repeatCount="indefinite" />
+            </path>
+          </svg>
+        ) : (
+          [40, 70, 45, 90, 60, 30].map((h, i) => (
+            <div key={i} className="w-[3px] bg-primary/80" style={{ height: `${h}%` }} />
+          ))
+        )}
       </div>
     </div>
   );

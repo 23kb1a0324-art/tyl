@@ -9,16 +9,37 @@ export function DataOverview() {
         <Database className="w-4 h-4 text-primary/70" />
       </div>
 
-      <div className="flex justify-between items-end mb-4">
+      <div className="flex justify-between items-end mb-4 relative">
         <div>
           <div className="text-3xl font-heading text-primary glow-text">24.7 TB</div>
           <div className="text-[10px] font-mono text-green-400">+2.4 TB SINCE LAST WEEK</div>
         </div>
         
-        <div className="w-12 h-12 relative group">
-          <div className="absolute inset-0 border border-primary/50 transform rotate-45 group-hover:rotate-90 transition-transform duration-1000" />
-          <div className="absolute inset-2 border border-primary/30 transform -rotate-12 group-hover:rotate-45 transition-transform duration-1000" />
-          <div className="absolute inset-4 bg-primary/20 backdrop-blur-sm transform rotate-12" />
+        <div className="w-20 h-24 relative flex items-center justify-center">
+          <svg viewBox="0 0 100 120" className="w-full h-full text-primary fill-none stroke-current" strokeWidth="1.5">
+            {/* Top Ellipse */}
+            <ellipse cx="50" cy="25" rx="35" ry="12" className="fill-primary/10" />
+            
+            {/* Middle Ellipse */}
+            <ellipse cx="50" cy="55" rx="35" ry="12" className="fill-primary/5" />
+            
+            {/* Bottom Ellipse */}
+            <ellipse cx="50" cy="85" rx="35" ry="12" className="fill-primary/10" />
+            
+            {/* Vertical Lines connecting ellipses */}
+            <path d="M15,25 L15,85" />
+            <path d="M85,25 L85,85" />
+            
+            {/* Middle connecting lines */}
+            <path d="M15,55 C15,65 85,65 85,55" strokeDasharray="4 4" className="opacity-50" />
+            
+            {/* Orbital rings */}
+            <ellipse cx="50" cy="55" rx="45" ry="20" stroke="rgba(0,229,255,0.4)" strokeWidth="1" transform="rotate(-15 50 55)" />
+            <ellipse cx="50" cy="55" rx="45" ry="20" stroke="rgba(0,229,255,0.4)" strokeWidth="1" transform="rotate(15 50 55)" />
+            
+            {/* Glow / Pulse Dot */}
+            <circle cx="50" cy="55" r="3" fill="currentColor" className="animate-pulse" />
+          </svg>
         </div>
       </div>
 

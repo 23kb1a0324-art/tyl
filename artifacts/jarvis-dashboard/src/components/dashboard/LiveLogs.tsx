@@ -48,21 +48,31 @@ export function LiveLogs() {
       <div className="text-[10px] font-mono text-primary/70 tracking-widest mb-3">LIVE SYSTEM LOGS</div>
       
       <div className="flex-1 bg-black/40 border border-primary/20 rounded-sm p-2 overflow-hidden mb-3 relative font-mono text-[9px] leading-tight">
-        <ScrollArea className="h-[180px]" ref={scrollRef}>
-          <div className="space-y-1 p-1">
-            {logs.map((log, i) => (
-              <div key={i} className="text-primary/70 break-all">
-                {log.includes('[INFO]') ? (
-                  <span className="text-primary mr-1">[INFO]</span>
-                ) : log.includes('[SUCCESS]') ? (
-                  <span className="text-green-400 mr-1">[SUCCESS]</span>
-                ) : log.includes('[WARN]') ? (
-                  <span className="text-yellow-400 mr-1">[WARN]</span>
-                ) : null}
-                {log.replace(/\[INFO\]|\[SUCCESS\]|\[WARN\]/, '')}
-              </div>
-            ))}
-            <div className="animate-blink w-2 h-3 bg-primary inline-block align-middle ml-1" />
+        <ScrollArea className="h-[150px]" ref={scrollRef}>
+          <div className="space-y-1.5 p-1">
+            {logs.map((log, i) => {
+              const timeMatch = log.match(/^(\[\d{2}:\d{2}:\d{2}\])\s(.*)$/);
+              if (!timeMatch) return <div key={i} className="text-primary/70">{log}</div>;
+              
+              const [, timeStr, restStr] = timeMatch;
+              
+              return (
+                <div key={i} className="text-primary/60 break-all flex gap-1">
+                  <span className="text-primary/40 shrink-0">{timeStr}</span>
+                  <span>
+                    {restStr.includes('[INFO]') ? (
+                      <span className="text-primary mr-1">[INFO]</span>
+                    ) : restStr.includes('[SUCCESS]') ? (
+                      <span className="text-green-400 mr-1">[SUCCESS]</span>
+                    ) : restStr.includes('[WARN]') ? (
+                      <span className="text-yellow-400 mr-1">[WARN]</span>
+                    ) : null}
+                    <span className="text-primary/80">{restStr.replace(/\[INFO\]|\[SUCCESS\]|\[WARN\]/, '')}</span>
+                  </span>
+                </div>
+              );
+            })}
+            <div className="animate-blink w-1.5 h-2.5 bg-primary inline-block ml-1" />
           </div>
         </ScrollArea>
       </div>

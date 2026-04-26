@@ -16,6 +16,7 @@ import { ActivityTimeline } from '@/components/dashboard/ActivityTimeline';
 import { LiveLogs } from '@/components/dashboard/LiveLogs';
 import { Terminal } from '@/components/dashboard/Terminal';
 import { NetworkMap } from '@/components/dashboard/NetworkMap';
+import { ModeSwitcher } from '@/components/dashboard/ModeSwitcher';
 
 export default function Dashboard() {
   return (
@@ -31,72 +32,79 @@ export default function Dashboard() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar />
         
-        <main className="flex-1 p-4 overflow-y-auto overflow-x-hidden custom-scrollbar">
-          <div className="max-w-[1600px] mx-auto pb-8">
+        <main className="flex-1 p-3 overflow-y-auto overflow-x-hidden custom-scrollbar">
+          <div className="max-w-[1600px] mx-auto pb-4">
             {/* Main Grid: 3 Columns */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-3 mb-3">
               
               {/* Left Column */}
-              <div className="md:col-span-3 flex flex-col gap-4">
-                <div className="h-[280px]">
+              <div className="md:col-span-3 flex flex-col gap-3">
+                <div className="h-[250px]">
                   <VoiceCommandCenter />
                 </div>
-                <div className="h-[320px] jarvis-panel p-4">
+                <div className="h-[280px] jarvis-panel p-3">
                   <AIThinkingProcess />
                 </div>
               </div>
 
               {/* Center Column - Hero */}
-              <div className="md:col-span-6 h-[616px] jarvis-panel">
+              <div className="md:col-span-6 h-[542px] jarvis-panel">
                 <HeroHUD />
               </div>
 
               {/* Right Column */}
-              <div className="md:col-span-3 flex flex-col gap-4">
-                <div className="h-[130px] jarvis-panel p-4">
+              <div className="md:col-span-3 flex flex-col gap-3">
+                <div className="h-[120px] jarvis-panel p-3">
                   <DataOverview />
                 </div>
-                <div className="h-[230px] jarvis-panel p-4">
+                <div className="h-[200px] jarvis-panel p-3">
                   <SystemPerformance />
                 </div>
-                <div className="h-[224px] jarvis-panel p-4">
+                <div className="h-[198px] jarvis-panel p-3">
                   <AIModules />
                 </div>
               </div>
             </div>
 
             {/* Middle Band - 4 Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-              <div className="h-[240px] jarvis-panel p-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-3">
+              <div className="h-[200px] jarvis-panel p-3">
                 <ConnectedDevices />
               </div>
-              <div className="h-[240px] jarvis-panel p-4">
+              <div className="h-[200px] jarvis-panel p-3">
                 <AutomationCenter />
               </div>
-              <div className="h-[240px] jarvis-panel p-4">
+              <div className="h-[200px] jarvis-panel p-3">
                 <MemoryCenter />
               </div>
-              <div className="h-[240px] jarvis-panel p-4">
+              <div className="h-[200px] jarvis-panel p-3">
                 <SecurityStatus />
               </div>
             </div>
 
-            {/* Bottom Band - 4 Cards (Predictive insights goes here since it's wide) */}
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-              <div className="md:col-span-1 h-[280px] jarvis-panel p-4">
+            {/* Predictive Insights Wide Band */}
+            <div className="grid grid-cols-1 gap-3 mb-3">
+              <div className="h-[180px] jarvis-panel p-3">
+                <PredictiveInsights />
+              </div>
+            </div>
+
+            {/* Bottom Band - 5 Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+              <div className="md:col-span-1 h-[240px] jarvis-panel p-3">
                  <ActivityTimeline />
               </div>
-              <div className="md:col-span-1 h-[280px] jarvis-panel p-4">
+              <div className="md:col-span-1 h-[240px] jarvis-panel p-3">
                  <LiveLogs />
               </div>
-              <div className="md:col-span-1 h-[280px] jarvis-panel p-4">
+              <div className="md:col-span-1 h-[240px] jarvis-panel p-3">
                  <Terminal />
               </div>
-              <div className="md:col-span-1 h-[280px] jarvis-panel p-4">
+              <div className="md:col-span-1 h-[240px] jarvis-panel p-3">
                  <NetworkMap />
               </div>
-              <div className="md:col-span-1 h-[280px]">
-                 <PredictiveInsights />
+              <div className="md:col-span-1 h-[240px]">
+                 <ModeSwitcher />
               </div>
             </div>
 

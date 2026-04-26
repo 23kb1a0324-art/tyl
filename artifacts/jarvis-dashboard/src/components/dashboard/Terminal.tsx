@@ -10,24 +10,24 @@ export function Terminal() {
         <TerminalIcon className="w-3 h-3 text-primary/70" />
       </div>
 
-      <div className="flex-1 bg-black border border-primary/30 rounded-sm p-3 font-mono text-[10px] flex flex-col mb-3 relative overflow-hidden group">
+      <div className="flex-1 bg-black/60 border border-primary/30 rounded-sm p-3 font-mono text-[10px] flex flex-col mb-3 relative overflow-hidden group">
          <div className="absolute inset-0 bg-[linear-gradient(rgba(0,229,255,0.05)_1px,transparent_1px)] bg-[length:100%_4px] pointer-events-none" />
          
          <div className="space-y-2 relative z-10 flex-1">
            <div>
-             <span className="text-primary glow-text">jarvis@system:~$</span> scan --all
-             <div className="text-primary/60 mt-0.5">Scanning all modules...</div>
+             <span className="text-primary font-bold">jarvis@system:~$</span> <span className="text-primary/90">scan --all</span>
+             <div className="text-primary/50 mt-0.5 ml-2">Scanning all modules... [OK]</div>
            </div>
            <div>
-             <span className="text-primary glow-text">jarvis@system:~$</span> connect camera
-             <div className="text-primary/60 mt-0.5">Connecting to camera 1...</div>
+             <span className="text-primary font-bold">jarvis@system:~$</span> <span className="text-primary/90">connect camera</span>
+             <div className="text-primary/50 mt-0.5 ml-2">Connecting to camera 1... [OK]</div>
            </div>
            <div>
-             <span className="text-primary glow-text">jarvis@system:~$</span> status
-             <div className="text-green-400 mt-0.5">All systems operational</div>
+             <span className="text-primary font-bold">jarvis@system:~$</span> <span className="text-primary/90">status</span>
+             <div className="text-green-400/80 mt-0.5 ml-2">All systems operational</div>
            </div>
            <div className="flex items-center">
-             <span className="text-primary glow-text mr-2">jarvis@system:~$</span>
+             <span className="text-primary font-bold mr-2">jarvis@system:~$</span>
              <span className="w-2 h-3 bg-primary animate-blink" />
            </div>
          </div>

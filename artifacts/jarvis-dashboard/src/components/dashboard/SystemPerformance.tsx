@@ -1,8 +1,5 @@
 import React from 'react';
 import { Activity, Cpu, HardDrive, Zap, Thermometer, Battery, ArrowDown, ArrowUp } from 'lucide-react';
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
-
-const dummyData = Array.from({ length: 20 }, () => ({ value: 20 + Math.random() * 60 }));
 
 export function SystemPerformance() {
   return (
@@ -58,8 +55,11 @@ export function SystemPerformance() {
 }
 
 function PerfStat({ icon: Icon, label, value, sub }: any) {
+  const isCpu = label === 'CPU USAGE';
+  const isRam = label === 'RAM USAGE';
+  
   return (
-    <div className="bg-primary/5 border border-primary/10 p-2 rounded-sm">
+    <div className="bg-primary/5 border border-primary/10 p-2 rounded-sm flex flex-col h-full justify-between">
       <div className="flex justify-between items-center mb-1">
         <div className="flex items-center gap-1.5">
           <Icon className="w-3 h-3 text-primary/70" />
@@ -67,12 +67,16 @@ function PerfStat({ icon: Icon, label, value, sub }: any) {
         </div>
         <span className="text-xs font-mono text-primary">{value}</span>
       </div>
-      <div className="h-4 mb-1">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={dummyData}>
-            <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={1} dot={false} isAnimationActive={false} />
-          </LineChart>
-        </ResponsiveContainer>
+      <div className="h-6 w-full flex-1 my-1">
+        <svg viewBox="0 0 100 24" className="w-full h-full text-primary fill-none stroke-current" preserveAspectRatio="none">
+          <path 
+            d={isCpu ? "M0,20 Q10,5 20,15 T40,10 T60,18 T80,8 T100,15" : 
+               isRam ? "M0,15 Q15,15 25,5 T50,15 T75,10 T100,20" : 
+               "M0,10 Q20,20 40,5 T80,15 T100,5"} 
+            strokeWidth="1.5" 
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
       </div>
       <div className="text-[8px] font-mono text-primary/40 text-right">{sub}</div>
     </div>
@@ -81,7 +85,7 @@ function PerfStat({ icon: Icon, label, value, sub }: any) {
 
 function NetworkIcon() {
   return (
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinelinejoin="round" className="text-primary">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
       <path d="M5 12.55a11 11 0 0 1 14.08 0" />
       <path d="M1.42 9a16 16 0 0 1 21.16 0" />
       <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
