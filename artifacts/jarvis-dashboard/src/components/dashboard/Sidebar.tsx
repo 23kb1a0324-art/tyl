@@ -19,20 +19,20 @@ const NAV_ITEMS = [
 
 export function Sidebar() {
   return (
-    <div className="w-56 h-[calc(100vh-81px)] border-r border-primary/30 bg-background/80 flex flex-col sticky top-[81px]">
-      <ScrollArea className="flex-1 py-4">
-        <nav className="space-y-1 px-3">
+    <div className="w-48 xl:w-56 shrink-0 h-[calc(100vh-65px)] border-r border-primary/30 bg-background/80 flex flex-col sticky top-[65px]">
+      <ScrollArea className="flex-1 py-3">
+        <nav className="space-y-1 px-2">
           {NAV_ITEMS.map((item) => (
             <button
               key={item.label}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-sm transition-all duration-200 ${
-                item.active 
-                  ? 'bg-primary/20 border border-primary/50 text-primary glow-box' 
+              className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-sm transition-all duration-200 ${
+                item.active
+                  ? 'bg-primary/20 border border-primary/50 text-primary glow-box'
                   : 'text-primary/60 hover:bg-primary/10 hover:text-primary'
               }`}
             >
-              <item.icon className={`w-4 h-4 ${item.active ? 'drop-shadow-[0_0_5px_rgba(0,229,255,0.8)]' : ''}`} />
-              <span className="text-xs font-mono tracking-widest">{item.label}</span>
+              <item.icon className={`w-4 h-4 shrink-0 ${item.active ? 'drop-shadow-[0_0_5px_rgba(0,229,255,0.8)]' : ''}`} />
+              <span className="text-[11px] font-mono tracking-[0.15em] truncate">{item.label}</span>
             </button>
           ))}
         </nav>
