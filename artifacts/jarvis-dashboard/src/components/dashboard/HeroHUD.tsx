@@ -1,35 +1,147 @@
-import React from 'react';
+import React, { useState, useEffect, useRef, KeyboardEvent } from 'react';
 import { MessageSquare, Code, LineChart, PenTool, Search, Zap, Send, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useJarvis } from '@/store/jarvis';
+import { parseCommand, fuzzyFind } from '@/lib/commandProcessor';
+import { speak } from '@/hooks/useSpeechRecognition';
+
+const USER = 'DAVOOD';
+
+function greetingForTime() {
+  const h = new Date().getHours();
+  if (h < 12) return 'GOOD MORNING';
+  if (h < 18) return 'GOOD AFTERNOON';
+  return 'GOOD EVENING';
+}
 
 export function HeroHUD() {
+  const [input, setInput] = useState('');
+  const [muteVoice, setMuteVoice] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const j = useJarvis();
+  const [aiConfidence, setAiConfidence] = useState(96);
+  const [focusBars, setFocusBars] = useState([0.4, 0.6, 0.8, 1, 0.9, 0.7, 0.9, 1, 0.8]);
+
+  // Animate focus bars + confidence subtly
+  useEffect(() => {
+    const t = setInterval(() => {
+      setFocusBars(prev => prev.map(() => 0.3 + Math.random() * 0.7));
+      setAiConfidence(c => Math.max(85, Math.min(99, c + (Math.random() - 0.5) * 4)));
+    }, 1800);
+    return () => clearInterval(t);
+  }, []);
+
+  const send = async (raw?: string) => {
+    const text = (raw ?? input).trim();
+    if (!text) return;
+    setInput('');
+    const start = performance.now();
+    j.addChat({ role: 'user', text });
+    j.addLog(`User: ${text}`, 'info');
+
+    // Animate thinking pipeline
+    const stages = ['input', 'analyzing', 'reasoning', 'decision', 'executing', 'completed'] as const;
+    for (let i = 0; i < stages.length; i++) {
+      j.setThinking(stages[i] as any);
+      // small variable delay
+      await new Promise(r => setTimeout(r, 180 + Math.random() * 120));
+    }
+
+    const intent = parseCommand(text);
+
+    // Side effects
+    let success = true;
+    switch (intent.kind) {
+      case 'set-mode':
+        j.setMode(intent.mode);
+        break;
+      case 'toggle-device': {
+        const d = fuzzyFind(j.devices, intent.query);
+        if (d) j.toggleDevice(d.id);
+        else { success = false; }
+        break;
+      }
+      case 'toggle-automation': {
+        const a = fuzzyFind(j.automations, intent.query);
+        if (a) j.toggleAutomation(a.id);
+        else { success = false; }
+        break;
+      }
+      case 'toggle-module': {
+        const m = fuzzyFind(j.modules, intent.query);
+        if (m) j.toggleModule(m.id);
+        else { success = false; }
+        break;
+      }
+      case 'clear-chat':
+        j.clearChat();
+        break;
+      case 'open':
+        j.addLog(`Launch request: ${intent.target}`, 'info');
+        break;
+      case 'search':
+        try { window.open(`https://www.google.com/search?q=${encodeURIComponent(intent.query)}`, '_blank', 'noopener'); } catch {}
+        break;
+    }
+
+    const replyText = success
+      ? intent.reply
+      : `I could not find anything matching "${'query' in intent ? intent.query : ''}".`;
+
+    j.addChat({ role: 'jarvis', text: replyText });
+    const dur = Math.round(performance.now() - start);
+    j.setLastCommand({ text, success, durationMs: dur });
+    j.addLog(`JARVIS: ${replyText}`, success ? 'success' : 'warn');
+
+    if (!muteVoice) speak(replyText);
+
+    // Reset thinking after a moment
+    setTimeout(() => j.setThinking('idle'), 1200);
+  };
+
+  const onKey = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      send();
+    }
+  };
+
+  const lastJarvis = [...j.conversations].reverse().find(c => c.role === 'jarvis');
+
   return (
     <div className="relative flex flex-col items-center h-full p-4 overflow-hidden">
       {/* Greeting */}
       <div className="relative w-full text-center mt-2 mb-3 z-20">
-        <div className="absolute right-0 top-1 text-[10px] font-mono text-primary/70 hover:text-primary cursor-pointer hover:underline flex items-center gap-1">
-          <Settings className="w-3 h-3" /> tools
-        </div>
+        <button
+          onClick={() => setMuteVoice(v => !v)}
+          className="absolute right-0 top-1 text-[10px] font-mono text-primary/70 hover:text-primary cursor-pointer hover:underline flex items-center gap-1"
+          title={muteVoice ? 'Voice muted (click to enable)' : 'Voice enabled (click to mute)'}
+        >
+          <Settings className="w-3 h-3" /> {muteVoice ? 'voice off' : 'voice on'}
+        </button>
         <h2 className="text-2xl xl:text-3xl font-heading text-foreground tracking-widest">
-          GOOD MORNING, <span className="text-primary glow-text">DAVOOD</span>
+          {greetingForTime()}, <span className="text-primary glow-text">{USER}</span>
         </h2>
-        <p className="text-xs xl:text-sm font-mono text-primary/70 mt-1">How can I assist you today?</p>
+        <p className="text-xs xl:text-sm font-mono text-primary/70 mt-1 truncate px-8">
+          {lastJarvis ? lastJarvis.text : 'How can I assist you today?'}
+        </p>
       </div>
 
       {/* Action Chips */}
       <div className="flex flex-wrap justify-center gap-2 mb-4 z-20 max-w-full">
         {[
-          { label: 'CHAT', icon: MessageSquare },
-          { label: 'CODE', icon: Code },
-          { label: 'ANALYZE', icon: LineChart },
-          { label: 'DESIGN', icon: PenTool },
-          { label: 'RESEARCH', icon: Search },
-          { label: 'AUTOMATE', icon: Zap },
+          { label: 'CHAT', icon: MessageSquare, prompt: 'Hello JARVIS' },
+          { label: 'CODE', icon: Code, prompt: 'Generate a Python hello world' },
+          { label: 'ANALYZE', icon: LineChart, prompt: 'Run system diagnostics' },
+          { label: 'DESIGN', icon: PenTool, prompt: 'Design a logo concept' },
+          { label: 'RESEARCH', icon: Search, prompt: 'Search latest AI papers' },
+          { label: 'AUTOMATE', icon: Zap, prompt: 'Enable Folder Organizer automation' },
         ].map((action) => (
           <Button
             key={action.label}
             variant="outline"
             size="sm"
+            onClick={() => send(action.prompt)}
             className="border-primary/40 bg-primary/5 text-primary hover:bg-primary/20 hover:text-primary text-[10px] font-mono h-7 rounded-sm px-3 border whitespace-nowrap tracking-wider"
           >
             <action.icon className="w-3 h-3 mr-1.5" />
@@ -38,9 +150,8 @@ export function HeroHUD() {
         ))}
       </div>
 
-      {/* Central HUD area — flexes to fill remaining space */}
+      {/* Central HUD area */}
       <div className="relative flex-1 w-full flex items-center justify-center min-h-0">
-        {/* 4 corner floating mini-panels — inside parent, never overflow */}
         <div className="absolute top-0 left-0 z-30">
           <CornerPanel title="AI MODE">
             <div className="w-10 h-10 my-1 animate-pulse-glow">
@@ -51,13 +162,13 @@ export function HeroHUD() {
                 <path d="M40,70 Q50,75 60,70" />
               </svg>
             </div>
-            <div className="text-[10px] font-mono text-primary font-bold text-center">ASSISTANT</div>
+            <div className="text-[10px] font-mono text-primary font-bold text-center uppercase">{j.mode}</div>
           </CornerPanel>
         </div>
 
         <div className="absolute top-0 right-0 z-30">
           <CornerPanel title="AI CONFIDENCE">
-            <RadialGauge size={48} value={96} />
+            <RadialGauge size={48} value={Math.round(aiConfidence)} />
           </CornerPanel>
         </div>
 
@@ -72,19 +183,17 @@ export function HeroHUD() {
           <CornerPanel title="FOCUS LEVEL">
             <div className="text-xs font-heading text-primary glow-text font-bold mb-1">HIGH</div>
             <div className="flex gap-[3px] h-5 items-end justify-center w-full px-1">
-              {[0.4, 0.6, 0.8, 1, 0.9, 0.7, 0.9, 1, 0.8].map((h, i) => (
-                <div key={i} className="w-1 bg-primary" style={{ height: `${h * 100}%` }} />
+              {focusBars.map((h, i) => (
+                <div key={i} className="w-1 bg-primary transition-all duration-700" style={{ height: `${h * 100}%` }} />
               ))}
             </div>
           </CornerPanel>
         </div>
 
-        {/* Center ring + JARVIS — sized responsively, won't collide with corners */}
+        {/* Center ring + JARVIS */}
         <div className="relative w-[min(280px,55%)] aspect-square flex items-center justify-center">
-          {/* Hex Grid Background */}
           <div className="absolute inset-[-20px] opacity-[0.04] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTEyIDBMIDI0IDEwTCAyNCAzMEwgMTIgNDBMIDAgMzBMIDAgMTBaIiBmaWxsPSJub25lIiBzdHJva2U9IiMwMEU1RkYiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==')] bg-center" />
 
-          {/* SVG rings */}
           <svg viewBox="0 0 400 400" className="absolute inset-0 w-full h-full pointer-events-none">
             <defs>
               <filter id="hudGlow" x="-20%" y="-20%" width="140%" height="140%">
@@ -117,16 +226,15 @@ export function HeroHUD() {
             </g>
 
             <g className="origin-center animate-rotate-slow-reverse" style={{ animationDuration: '20s' }}>
-              <circle cx="200" cy="200" r="100" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="100 20" filter="url(#hudGlow)" className="text-primary" />
+              <circle cx="200" cy="200" r="100" fill="none" stroke="currentColor" strokeWidth="4" strokeDasharray="100 20" filter="url(#hudGlow)" className={j.thinking !== 'idle' ? 'text-primary animate-pulse' : 'text-primary'} />
               <circle cx="200" cy="200" r="92" fill="none" stroke="currentColor" strokeWidth="1" className="text-primary/80" />
             </g>
 
             <circle cx="200" cy="200" r="70" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="4 4" className="text-primary/50 animate-pulse-glow" />
           </svg>
 
-          {/* Center Text */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="animate-pulse-glow">
+            <div className={j.thinking !== 'idle' ? 'animate-pulse' : 'animate-pulse-glow'}>
               <span className="font-heading font-black text-primary text-xl xl:text-2xl tracking-[0.25em] glow-text drop-shadow-[0_0_10px_rgba(0,229,255,0.8)]">
                 J.A.R.V.I.S
               </span>
@@ -140,14 +248,23 @@ export function HeroHUD() {
         <div className="absolute -inset-0.5 bg-primary/20 blur-[8px] rounded-sm group-hover:bg-primary/30 transition duration-500" />
         <div className="relative flex items-center bg-background/80 border border-primary/50 rounded-sm p-1">
           <div className="px-3">
-            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <div className={`w-2 h-2 rounded-full ${j.thinking !== 'idle' ? 'bg-yellow-400' : 'bg-primary'} animate-pulse`} />
           </div>
           <input
+            ref={inputRef}
             type="text"
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={onKey}
             placeholder="Ask me anything or give a command..."
             className="flex-1 bg-transparent border-none text-sm font-mono text-primary placeholder:text-primary/40 focus:outline-none focus:ring-0 py-2 min-w-0"
           />
-          <Button size="icon" variant="ghost" className="text-primary hover:bg-primary/20 hover:text-primary shrink-0 mr-1">
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={() => send()}
+            className="text-primary hover:bg-primary/20 hover:text-primary shrink-0 mr-1"
+          >
             <Send className="w-4 h-4" />
           </Button>
         </div>
@@ -180,13 +297,13 @@ function RadialGauge({ size, value, small }: { size: number; value: number; smal
           fill="none"
           stroke="currentColor"
           strokeWidth="8"
-          className="text-primary glow-box"
+          className="text-primary glow-box transition-all duration-700"
           strokeDasharray={circ}
           strokeDashoffset={offset}
           strokeLinecap="round"
         />
       </svg>
-      <div className={`absolute font-heading ${small ? 'text-[10px]' : 'text-sm'} text-primary glow-text font-bold`}>
+      <div className={`absolute font-heading ${small ? 'text-[10px]' : 'text-sm'} text-primary glow-text font-bold tabular-nums`}>
         {value}%
       </div>
     </div>
