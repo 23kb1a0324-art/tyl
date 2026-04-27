@@ -4,19 +4,19 @@ import { Activity, Cpu, HardDrive, Zap, Thermometer, Battery, ArrowDown, ArrowUp
 export function SystemPerformance() {
   return (
     <div className="flex flex-col h-full">
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-start mb-2 shrink-0">
         <div className="text-[10px] font-mono text-primary/70 tracking-widest">SYSTEM PERFORMANCE</div>
         <Activity className="w-4 h-4 text-primary/70" />
       </div>
 
-      <div className="space-y-4">
-        <div className="grid grid-cols-3 gap-3">
+      <div className="flex flex-col gap-2 flex-1 min-h-0">
+        <div className="grid grid-cols-3 gap-1.5">
           <PerfStat icon={Cpu} label="CPU USAGE" value="23%" sub="2.4 GHz" />
           <PerfStat icon={HardDrive} label="RAM USAGE" value="45%" sub="7.1 / 15.8 GB" />
           <PerfStat icon={Zap} label="GPU USAGE" value="32%" sub="NVIDIA RTX 3060" />
         </div>
 
-        <div className="grid grid-cols-3 gap-3 border-t border-primary/20 pt-4">
+        <div className="grid grid-cols-3 gap-2 border-t border-primary/20 pt-2">
           <div className="flex gap-2 items-center">
             <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20">
               <Thermometer className="w-3 h-3 text-primary" />

@@ -30,7 +30,7 @@ export function HeroHUD() {
             key={action.label}
             variant="outline"
             size="sm"
-            className="border-primary/40 bg-primary/5 text-primary hover:bg-primary/20 hover:text-primary text-[10px] font-mono h-7 rounded-full px-3 border whitespace-nowrap"
+            className="border-primary/40 bg-primary/5 text-primary hover:bg-primary/20 hover:text-primary text-[10px] font-mono h-7 rounded-sm px-3 border whitespace-nowrap tracking-wider"
           >
             <action.icon className="w-3 h-3 mr-1.5" />
             {action.label}

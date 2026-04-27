@@ -39,10 +39,10 @@ export default function Dashboard() {
               
               {/* Left Column */}
               <div className="md:col-span-3 flex flex-col gap-3">
-                <div className="h-[250px]">
+                <div className="h-[230px]">
                   <VoiceCommandCenter />
                 </div>
-                <div className="h-[280px] jarvis-panel p-3">
+                <div className="h-[300px] jarvis-panel p-3">
                   <AIThinkingProcess />
                 </div>
               </div>
@@ -54,13 +54,13 @@ export default function Dashboard() {
 
               {/* Right Column */}
               <div className="md:col-span-3 flex flex-col gap-3">
-                <div className="h-[120px] jarvis-panel p-3">
+                <div className="h-[170px] jarvis-panel p-3">
                   <DataOverview />
                 </div>
                 <div className="h-[200px] jarvis-panel p-3">
                   <SystemPerformance />
                 </div>
-                <div className="h-[198px] jarvis-panel p-3">
+                <div className="h-[160px] jarvis-panel p-3">
                   <AIModules />
                 </div>
               </div>

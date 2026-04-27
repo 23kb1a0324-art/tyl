@@ -3,19 +3,19 @@ import { Database } from 'lucide-react';
 
 export function DataOverview() {
   return (
-    <div className="flex flex-col h-full justify-between">
-      <div className="flex justify-between items-start">
+    <div className="flex flex-col h-full min-h-0 gap-2">
+      <div className="flex justify-between items-start shrink-0">
         <div className="text-[10px] font-mono text-primary/70 tracking-widest">DATA OVERVIEW</div>
         <Database className="w-4 h-4 text-primary/70" />
       </div>
 
-      <div className="flex justify-between items-end mb-4 relative">
-        <div>
-          <div className="text-3xl font-heading text-primary glow-text">24.7 TB</div>
-          <div className="text-[10px] font-mono text-green-400">+2.4 TB SINCE LAST WEEK</div>
+      <div className="flex justify-between items-center gap-2 flex-1 min-h-0 relative">
+        <div className="min-w-0">
+          <div className="text-2xl xl:text-3xl font-heading text-primary glow-text leading-none">24.7 TB</div>
+          <div className="text-[9px] font-mono text-green-400 mt-1.5">+2.4 TB SINCE LAST WEEK</div>
         </div>
-        
-        <div className="w-20 h-24 relative flex items-center justify-center">
+
+        <div className="w-16 h-16 relative flex items-center justify-center shrink-0">
           <svg viewBox="0 0 100 120" className="w-full h-full text-primary fill-none stroke-current" strokeWidth="1.5">
             {/* Top Ellipse */}
             <ellipse cx="50" cy="25" rx="35" ry="12" className="fill-primary/10" />

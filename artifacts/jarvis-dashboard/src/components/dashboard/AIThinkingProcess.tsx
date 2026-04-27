@@ -17,15 +17,15 @@ export function AIThinkingProcess() {
         <Brain className="w-32 h-32 text-primary" />
       </div>
 
-      <div className="flex justify-between items-start mb-4">
+      <div className="flex justify-between items-start mb-3">
         <div className="text-[10px] font-mono text-primary/70 tracking-widest">AI THINKING PROCESS</div>
         <Brain className="w-4 h-4 text-primary relative z-10" />
       </div>
 
-      <div className="flex-1 relative">
+      <div className="flex-1 relative min-h-0">
         <div className="absolute left-[7px] top-2 bottom-6 w-px bg-primary/20" />
         
-        <div className="space-y-4 relative z-10">
+        <div className="space-y-2.5 relative z-10">
           {STEPS.map((step, i) => (
             <div key={i} className="flex gap-3 items-start group">
               <div className="mt-0.5 bg-card">
