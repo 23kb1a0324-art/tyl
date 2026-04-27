@@ -1,43 +1,52 @@
 import React from 'react';
-import { FileText, Camera, Terminal, Shield, Zap } from 'lucide-react';
+import { useJarvis } from '@/store/jarvis';
 
-const EVENTS = [
-  { time: '10:35 AM', type: 'Voice Command Executed', detail: 'Open VS Code', icon: Zap },
-  { time: '10:22 AM', type: 'Camera 1 Motion Detected', detail: 'Recording Started', icon: Camera },
-  { time: '10:15 AM', type: 'Python Script Executed', detail: 'data_analysis.py', icon: Terminal },
-  { time: '10:02 AM', type: 'Threat Scan Completed', detail: 'No threats found', icon: Shield },
-  { time: '09:30 AM', type: 'System Optimization', detail: 'Performance improved', icon: FileText },
-];
+function fmtTime(ts: number) {
+  return new Date(ts).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+
+const LEVEL_COLOR: Record<string, string> = {
+  info: 'bg-primary',
+  success: 'bg-green-400',
+  warn: 'bg-yellow-400',
+  error: 'bg-red-400',
+};
 
 export function ActivityTimeline() {
-  return (
-    <div className="flex flex-col h-full">
-      <div className="flex justify-between items-start mb-4">
-        <div className="text-[10px] font-mono text-primary/70 tracking-widest">ACTIVITY TIMELINE</div>
-        <div className="text-[9px] font-mono text-primary hover:underline cursor-pointer">VIEW ALL</div>
-      </div>
+  const { logs } = useJarvis();
+  const recent = [...logs].slice(0, 6); // newest first
 
-      <div className="flex-1 relative">
-        <div className="absolute left-[9px] top-2 bottom-2 w-px bg-primary/20" />
-        
-        <div className="space-y-3 relative z-10 pl-1">
-          {EVENTS.map((event, i) => (
-            <div key={i} className="flex gap-3 items-start group">
-              <div className="mt-0.5 bg-background p-0.5 rounded-full border border-primary/30 z-10 group-hover:border-primary group-hover:bg-primary/20 transition-colors">
-                <event.icon className="w-3 h-3 text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between items-center">
-                  <div className="text-[10px] font-mono text-primary/90">{event.type}</div>
-                  <div className="text-[8px] font-mono text-primary/50">{event.time}</div>
-                </div>
-                <div className="text-[9px] font-mono text-primary/50 flex items-center gap-1 mt-0.5">
-                  <span className="text-primary/30">→</span> {event.detail}
-                </div>
+  return (
+    <div className="flex flex-col h-full justify-between">
+      <div className="text-[10px] font-mono text-primary/70 tracking-widest mb-2 shrink-0">ACTIVITY TIMELINE</div>
+
+      <div className="flex-1 relative overflow-y-auto custom-scrollbar pr-1 min-h-0">
+        {/* Timeline line */}
+        <div className="absolute left-2 top-0 bottom-0 w-px bg-primary/20" />
+
+        {recent.length === 0 && (
+          <div className="text-[9px] font-mono text-primary/40 italic pl-6 pt-2">
+            No activity yet — interact to populate
+          </div>
+        )}
+
+        {recent.map((event, index) => (
+          <div
+            key={event.id}
+            className="flex items-start gap-3 mb-2 relative"
+            style={{ animation: `pulse-glow 1.5s ease-out ${index * 0.1}s` }}
+          >
+            <div className="flex flex-col items-center pt-0.5 z-10 shrink-0">
+              <div className={`w-3 h-3 rounded-full border border-primary/30 flex items-center justify-center ${LEVEL_COLOR[event.level]} ${index === 0 ? 'shadow-[0_0_8px_rgba(0,229,255,0.8)]' : 'opacity-70'}`}>
+                <span className="w-1 h-1 rounded-full bg-background" />
               </div>
             </div>
-          ))}
-        </div>
+            <div className="flex flex-col text-[10px] font-mono leading-snug min-w-0 flex-1">
+              <span className="text-primary/50 text-[9px] tabular-nums">{fmtTime(event.time)}</span>
+              <span className="text-primary truncate">{event.message}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
